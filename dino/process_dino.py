@@ -7,7 +7,7 @@ from yolo11n.detect import run as yolo_detect
 from src.extract_roi import extract_roi
 from dino.color_based.process_color import detect_traffic_light_color
 
-def process_image(image_path):
+def process_image(image_path, output_path="output.png"):
     """
     Processes a single image to detect traffic lights and analyze them.
 
@@ -21,16 +21,20 @@ def process_image(image_path):
         return
 
     # Step 1: Detect traffic lights with YOLO
-    detections = yolo_detect(source=image, classes=[9])  # Assuming class 9 is 'traffic light'
+    detections = yolo_detect(source=image, classes=[9])  # 9 is the traffic light
 
     for det in detections:
         x1, y1, x2, y2, conf, cls = det
+        print(f"Detected object: Class {cls}, Confidence {conf:.2f}, BBox ({x1}, {y1}, {x2}, {y2})")
 
         # Step 2: Extract the detected region
         cropped_light = extract_roi(image, (x1, y1, x2, y2))
 
         # Step 3: Process the traffic light color
         signal = detect_traffic_light_color(cropped_light)
+
+        # ✅ Print the detected color result
+        print(f"Detected Traffic Light Color: {signal.upper()} (Confidence: {conf:.2f})")
 
         # Step 4: Draw detection results on the image
         label = f"{signal.upper()} ({conf:.2f})"
@@ -39,12 +43,12 @@ def process_image(image_path):
         cv2.putText(image, label, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
 
     # Show the processed image
-    cv2.imshow("Processed Image", image)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+    cv2.imwrite(output_path, image)
+    print(f"Processed image saved as {output_path}")
 
 if __name__ == "__main__":
-    process_image("/mmfs1/gscratch/krishna/zylim/echovision/test_images/intersection-1.png")  # Change to your test image path
+    process_image("/mmfs1/gscratch/krishna/zylim/echovision/test_images/intersection-1.png", 
+                  "/mmfs1/gscratch/krishna/zylim/echovision/output_images/processed.png")
 
 
 
