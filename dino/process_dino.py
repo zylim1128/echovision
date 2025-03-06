@@ -149,7 +149,7 @@ def process_image(image_path, output_path="output.png"):
         return
 
     # Step 1: Detect traffic lights with YOLO
-    detections = yolo_detect(model, source=image, classes=[9])  # 9 is the traffic light class
+    detections = yolo_detect(model, source=image, classes=[7])  # 7 is the traffic light class now (updated)
 
     pedestrian_traffic_lights = []
 
@@ -179,7 +179,7 @@ def process_image(image_path, output_path="output.png"):
     cv2.imwrite(output_path, image)
 
 if __name__ == "__main__":
-    model_path = "/mmfs1/gscratch/krishna/zylim/echovision/runs/detect/train13/weights/best.pt"
+    model_path = "/mmfs1/gscratch/krishna/zylim/echovision/runs/detect/train15/weights/best.pt"
     load_model(model_path)  # Load the model once
 
     process_image(

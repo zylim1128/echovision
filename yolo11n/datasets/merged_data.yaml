@@ -5,10 +5,12 @@ path: /mmfs1/gscratch/krishna/zylim/echovision/yolo11n/datasets
 train: 
   - coco/train
   - crosswalk/train
+  - training_images/train
 
 val: 
   - coco/val
   - crosswalk/val
+  - training_images/val
 
 test:  # Optional
   - coco/test
