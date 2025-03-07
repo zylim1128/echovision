@@ -17,29 +17,15 @@ test:  # Optional
   - crosswalk/test
 
 # Number of classes
-nc: 22  # 80 COCO classes + 1 new class (crosswalks)
+nc: 8 # 80 COCO classes + 1 new class (crosswalks)
 
 # Class names (COCO classes + crosswalk)
 names:
   0: person
   1: bicycle
   2: car
-  3: motorcycle
-  4: bus
-  5: train
-  6: truck
-  7: traffic light
-  8: fire hydrant
-  9: stop sign
-  10: chair
-  11: dining table
-  12: toilet
-  13: tv
-  14: laptop
-  15: mouse
-  16: remote
-  17: keyboard
-  18: cell phone
-  19: book
-  20: clock
-  21: crosswalks
+  3: bus
+  4: traffic light
+  5: stop sign
+  6: chair
+  7: crosswalks
