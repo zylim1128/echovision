@@ -18,8 +18,8 @@ def update_labels(folder):
         updated_lines = []
         for line in lines:
             parts = line.strip().split()
-            if parts and parts[0] == "80":  # Change label 0 to 80
-                parts[0] = "21"  # now update to 21 for reindexing
+            if parts and parts[0] == "21":  # Change label 0 to 80
+                parts[0] = "7"  # now update to 21 for reindexing
             updated_lines.append(" ".join(parts))
 
         # Save changes
