@@ -151,23 +151,23 @@ def process_image(image_path, output_path="output.png"):
         # Get class name (fallback to "Unknown" if class isn't mapped)
         class_name = class_names.get(cls, f"Unknown ({cls})")
 
-         # Draw bounding box
-        color = (0, 255, 0)  # Green color for boxes
-        cv2.rectangle(image, (int(x1), int(y1)), (int(x2), int(y2)), color, 2)
+        #  # Draw bounding box
+        # color = (0, 255, 0)  # Green color for boxes
+        # cv2.rectangle(image, (int(x1), int(y1)), (int(x2), int(y2)), color, 2)
         
-        # Label the detected object
-        label = f"{class_name} ({conf:.2f})"
-        cv2.putText(image, label, (int(x1), int(y1) - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
+        # # Label the detected object
+        # label = f"{class_name} ({conf:.2f})"
+        # cv2.putText(image, label, (int(x1), int(y1) - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
     
-        # Save the processed image
-        os.makedirs(os.path.dirname(output_path), exist_ok=True)  # Ensure the output folder exists
-        cv2.imwrite(output_path, image)
-        print(f"Processed image saved at {output_path}")
+        # # Save the processed image
+        # os.makedirs(os.path.dirname(output_path), exist_ok=True)  # Ensure the output folder exists
+        # cv2.imwrite(output_path, image)
+        # print(f"Processed image saved at {output_path}")
 
         # Check if the detected object is close
         if is_object_close(x1, y1, x2, y2, image_height, image_width):
             clock_position = get_clock_position(x1, y1, x2, y2, image_height, image_width)
-            close_objects.append(f"⚠️ a {class_name} {clock_position} is close!")
+            close_objects.append(f"Warning: a {class_name} {clock_position} is close!")
 
         if class_name == "traffic light":
             # Only process square-like traffic lights
@@ -202,6 +202,6 @@ if __name__ == "__main__":
 
     process_image(
         # "/Users/patricialee/Development/echovision/test_images/intersection-1.png",
-        "/Users/patricialee/Development/echovision/distance_images/test_image2.png",
+        "/Users/patricialee/Development/echovision/distance_images/test_image5.png",
         "/Users/patricialee/Development/echovision/output_images/processed.png"
     )
