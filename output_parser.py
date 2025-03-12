@@ -1,3 +1,4 @@
+import sys
 import re
 
 def parse_output(output):
@@ -48,9 +49,6 @@ def parse_output(output):
     
     return f"{objects_str} {signal_message}"
 
-# Example usage
-with open("output.txt", "r") as file:
-    output_text = file.read()
 
-parsed_result = parse_output(output_text)
+parsed_result = parse_output(sys.stdin.read())
 print(parsed_result)

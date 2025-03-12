@@ -1,6 +1,10 @@
 import cv2
 import numpy as np
 
+class TrafficSignalError(Exception):
+    """Custom exception for errors related to traffic signal determination."""
+    pass
+
 def detect_traffic_light_color(image):
     """
     Detects the color of a traffic light in the given image.
@@ -16,8 +20,8 @@ def detect_traffic_light_color(image):
         image = cv2.imread(image)
     
     if image is None:
-        print("Error: Could not load image")
-        return "unknown"
+        raise IOError("Error: Could not load image")
+
 
     # Convert to HSV for better color detection
     hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
@@ -43,4 +47,4 @@ def detect_traffic_light_color(image):
     elif red_pixels > white_pixels:
         return "stop"
     else:
-        return "unknown"
+        raise TrafficSignalError("Can't determine traffic signal type")

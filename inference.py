@@ -30,12 +30,13 @@ def get_files_in_dir(dir_path):
   if not os.path.exists(dir_path) or not os.path.isdir(dir_path):
     return []
 
-  file_list = []
-  for root, _, files in os.walk(dir_path):
-    for file in files:
-      file_path = os.path.join(root, file)
-      file_list.append(file_path)
-  return file_list
+  return [f for f in dir_path if f.endswith(('.jpg', '.png', '.jpeg'))]
+#   file_list = []
+#   for root, _, files in os.walk(dir_path):
+#     for file in files:
+#       file_path = os.path.join(root, file)
+#       file_list.append(file_path)
+#   return file_list
 
 parser = argparse.ArgumentParser()
 parser.add_argument('model_path')
