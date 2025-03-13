@@ -2,6 +2,8 @@ import cv2
 import os
 import sys
 import math
+import io
+import contextlib
 
 # Import custom modules
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
@@ -118,79 +120,85 @@ def process_image(image_path, output_path="output.png"):
         image_path (str): Path to the input image.
         output_path (str): Path to save the processed output image.
     """
-    # Load image
-    image = cv2.imread(image_path)
-    if image is None:
-        print(f"Error: Could not load image '{image_path}'")
-        return
 
-    image_height, image_width, _ = image.shape  # Get image dimensions
+    buffer = io.StringIO()  # Create a buffer to capture stdout
+    with contextlib.redirect_stdout(buffer):
 
-    class_names = {
-        0: "person",
-        1: "bicycle",
-        2: "car",
-        3: "bus",
-        4: "traffic light",
-        5: "stop sign",
-        6: "chair",
-        7: "crosswalks"
-    }
+        # Load image
+        image = cv2.imread(image_path)
+        if image is None:
+            print(f"Error: Could not load image '{image_path}'")
+            return
 
-    # Step 1: Detect traffic lights with YOLO
-    # detect_trafficlight = yolo_detect(model, source=image, classes=[7])  # No class filtering
-    detections = yolo_detect(model, source=image)  # No class filtering
+        image_height, image_width, _ = image.shape  # Get image dimensions
+
+        class_names = {
+            0: "person",
+            1: "bicycle",
+            2: "car",
+            3: "bus",
+            4: "traffic light",
+            5: "stop sign",
+            6: "chair",
+            7: "crosswalks"
+        }
+
+        # Step 1: Detect traffic lights with YOLO
+        # detect_trafficlight = yolo_detect(model, source=image, classes=[7])  # No class filtering
+        detections = yolo_detect(model, source=image)  # No class filtering
 
 
-    pedestrian_traffic_lights = []
-    close_objects = []
+        pedestrian_traffic_lights = []
+        close_objects = []
 
-    for det in detections:
-        x1, y1, x2, y2, conf, cls = det
+        for det in detections:
+            x1, y1, x2, y2, conf, cls = det
+            
+            # Get class name (fallback to "Unknown" if class isn't mapped)
+            class_name = class_names.get(cls, f"Unknown ({cls})")
+
+            #  # Draw bounding box
+            # color = (0, 255, 0)  # Green color for boxes
+            # cv2.rectangle(image, (int(x1), int(y1)), (int(x2), int(y2)), color, 2)
+            
+            # # Label the detected object
+            # label = f"{class_name} ({conf:.2f})"
+            # cv2.putText(image, label, (int(x1), int(y1) - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
         
-        # Get class name (fallback to "Unknown" if class isn't mapped)
-        class_name = class_names.get(cls, f"Unknown ({cls})")
+            # # Save the processed image
+            # os.makedirs(os.path.dirname(output_path), exist_ok=True)  # Ensure the output folder exists
+            # cv2.imwrite(output_path, image)
+            # print(f"Processed image saved at {output_path}")
 
-        #  # Draw bounding box
-        # color = (0, 255, 0)  # Green color for boxes
-        # cv2.rectangle(image, (int(x1), int(y1)), (int(x2), int(y2)), color, 2)
+            # Check if the detected object is close
+            if is_object_close(x1, y1, x2, y2, image_height, image_width):
+                clock_position = get_clock_position(x1, y1, x2, y2, image_height, image_width)
+                close_objects.append(f"Warning: a {class_name} {clock_position} is close!")
+
+            if class_name == "traffic light":
+                # Only process square-like traffic lights
+                if not is_square_like(x1, y1, x2, y2):
+                    continue
+
+                # Extract region of interest (ROI) for the traffic light
+                cropped_light = extract_roi(image, (x1, y1, x2, y2))
+
+                # Process the traffic light color to determine signal
+                signal = detect_traffic_light_color(cropped_light)
+
+                # If it's a pedestrian traffic light, save the result
+                if signal:
+                    pedestrian_traffic_lights.append(f"✅ Signal Detected: {signal.upper()}")
+
+        # Output detected pedestrian traffic light signals
+        for signal in pedestrian_traffic_lights:
+            print(signal)
         
-        # # Label the detected object
-        # label = f"{class_name} ({conf:.2f})"
-        # cv2.putText(image, label, (int(x1), int(y1) - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
-    
-        # # Save the processed image
-        # os.makedirs(os.path.dirname(output_path), exist_ok=True)  # Ensure the output folder exists
-        # cv2.imwrite(output_path, image)
-        # print(f"Processed image saved at {output_path}")
+        # Output close object warnings
+        for warning in close_objects:
+            print(warning)
 
-        # Check if the detected object is close
-        if is_object_close(x1, y1, x2, y2, image_height, image_width):
-            clock_position = get_clock_position(x1, y1, x2, y2, image_height, image_width)
-            close_objects.append(f"Warning: a {class_name} {clock_position} is close!")
-
-        if class_name == "traffic light":
-            # Only process square-like traffic lights
-            if not is_square_like(x1, y1, x2, y2):
-                continue
-
-            # Extract region of interest (ROI) for the traffic light
-            cropped_light = extract_roi(image, (x1, y1, x2, y2))
-
-            # Process the traffic light color to determine signal
-            signal = detect_traffic_light_color(cropped_light)
-
-            # If it's a pedestrian traffic light, save the result
-            if signal:
-                pedestrian_traffic_lights.append(f"✅ Signal Detected: {signal.upper()}")
-
-    # Output detected pedestrian traffic light signals
-    for signal in pedestrian_traffic_lights:
-        print(signal)
-    
-    # Output close object warnings
-    for warning in close_objects:
-        print(warning)
+    return buffer.getvalue()
 
     # Save the processed image
     # os.makedirs(os.path.dirname(output_path), exist_ok=True)  # Ensure the output folder exists
