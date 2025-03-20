@@ -50,7 +50,7 @@ def process_image(image_path, model, output_path="output.png"):
     # Load image
     image = cv2.imread(image_path)
     if image is None:
-        stderr(f"Error: Could not load image '{image_path}'")
+        print(f"Error: Could not load image '{image_path}'", file=sys.stderr)
         return
 
     # Step 1: Detect traffic lights with YOLO
@@ -76,13 +76,13 @@ def process_image(image_path, model, output_path="output.png"):
             # If it's a pedestrian traffic light, save the result
             pedestrian_traffic_lights.append(f"✅ Signal Detected: {signal.upper()}")
         except IOError as e:
-            stderr(f"IOError: {e}")
+            print(f"IOError: {e}", file=sys.stderr)
             
         except TrafficSignalError as e:
-            stderr(f"TrafficSignalError: {e}")
+            print(f"TrafficSignalError: {e}", file=sys.stderr)
             
         except Exception as e:
-            stderr(f"Unexpected error: {e}")
+            print(f"Unexpected error: {e}", file=sys.stderr)
 
 
     # Output detected pedestrian traffic light signals
