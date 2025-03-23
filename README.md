@@ -3,7 +3,7 @@
  Sub the yolo11n.pt with your model after fine tuning
 
 ## Demo
-<img src="./echovision_demo.gif" alt="GIF demo" width="333" height="720">
+<img src="https://github.com/zylim1128/echovision/blob/main/echovision_demo.gif" alt="GIF demo" width="333" height="720">
 
 
 
