@@ -4,6 +4,8 @@
 
 ## Demo
  <video width="333" height="720" controls>
-   <source src="https://github.com/zylim1128/echovision/blob/a1ea407e42b63ed622893715176ae4cf0c930f91/echovision_demo.mp4" type="video/mp4">
+   <source src="https://github.com/zylim1128/echovision/blob/main/echovision_demo.mp4" type="video/mp4">
    Your browser does not suppor the video tag
  </video>
+ [Video Demo](https://github.com/zylim1128/echovision/blob/main/echovision_demo.mp4)
+
